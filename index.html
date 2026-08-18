@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#020710">
+<title>Xploit Ops | Ethical Hacking & Cybersecurity by Ankit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root{
+  --bg:#020710;--bg2:#04111c;--panel:rgba(5,18,28,.68);
+  --cyan:#00d9ff;--green:#21ff86;--blue:#3977ff;
+  --text:#e8fbff;--muted:#8ca8b6;--line:rgba(0,217,255,.18);
+  --glow:0 0 35px rgba(0,217,255,.2),0 0 80px rgba(33,255,134,.08);
+  --max:1220px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(circle at 20% 15%,rgba(0,217,255,.10),transparent 28%),
+    radial-gradient(circle at 80% 35%,rgba(33,255,134,.07),transparent 26%),
+    linear-gradient(180deg,#020710 0%,#020a12 45%,#01050a 100%);
+  color:var(--text);font-family:Inter,system-ui,sans-serif;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.13;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:100% 4px;mix-blend-mode:screen;
+}
+a{color:inherit;text-decoration:none}
+button,input,textarea{font:inherit}
+#three-bg{position:fixed;inset:0;width:100%;height:100%;z-index:-4}
+#three-fx{position:fixed;inset:0;pointer-events:none;z-index:-3}
+#scroll-progress{position:fixed;top:0;left:0;width:0;height:3px;z-index:1000;background:linear-gradient(90deg,var(--green),var(--cyan),var(--blue));box-shadow:0 0 18px var(--cyan)}
+.cursor-glow{position:fixed;width:220px;height:220px;border-radius:50%;pointer-events:none;z-index:5;background:radial-gradient(circle,rgba(0,217,255,.12),transparent 68%);transform:translate(-50%,-50%);mix-blend-mode:screen}
+.container{width:min(var(--max),calc(100% - 48px));margin:auto}
+nav{
+  position:fixed;top:16px;left:50%;transform:translateX(-50%);
+  width:min(var(--max),calc(100% - 32px));height:68px;z-index:900;
+  border:1px solid rgba(0,217,255,.16);border-radius:18px;
+  background:rgba(2,9,16,.72);backdrop-filter:blur(20px);
+  display:flex;align-items:center;justify-content:space-between;padding:0 22px;
+  box-shadow:0 10px 45px rgba(0,0,0,.25), inset 0 0 0 1px rgba(255,255,255,.02);
+}
+.brand{display:flex;gap:11px;align-items:center;font-weight:800;letter-spacing:2px}
+.brand-mark{
+  width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  color:#00130c;background:linear-gradient(135deg,var(--green),var(--cyan));
+  box-shadow:0 0 22px rgba(0,217,255,.28);font-size:13px;
+}
+.brand span:nth-child(2){color:var(--cyan)} .brand span:nth-child(3){color:#b6fbe0}
+nav ul{display:flex;gap:22px;list-style:none}
+nav a{color:#9db7c2;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;transition:.25s}
+nav a:hover{color:var(--cyan);text-shadow:0 0 12px rgba(0,217,255,.7)}
+.nav-cta{padding:10px 14px;border:1px solid rgba(33,255,134,.45);border-radius:10px;color:#c8ffe5!important;background:rgba(33,255,134,.06)}
+.hero{min-height:100svh;display:grid;place-items:center;position:relative;padding:150px 0 100px;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:50px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--green);font:700 11px/1 JetBrains Mono;letter-spacing:2px;text-transform:uppercase}
+.eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);animation:pulse 1.4s infinite}
+@keyframes pulse{50%{transform:scale(.65);opacity:.45}}
+h1{font-size:clamp(3.4rem,8vw,7.8rem);line-height:.92;letter-spacing:-.055em;margin:20px 0 22px}
+h1 .gradient{background:linear-gradient(100deg,#f3ffff 5%,var(--cyan) 38%,var(--green) 75%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-copy{max-width:680px;color:#9bb4c1;font-size:17px;line-height:1.8}
+.hero-copy strong{color:#eafff7}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin:30px 0 28px}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;padding:13px 18px;border-radius:12px;
+  border:1px solid rgba(0,217,255,.3);background:rgba(0,217,255,.07);color:#e8fdff;
+  font:700 12px JetBrains Mono;letter-spacing:1.2px;text-transform:uppercase;transition:.3s;
+}
+.btn:hover{transform:translateY(-3px);border-color:var(--cyan);box-shadow:0 12px 30px rgba(0,217,255,.14)}
+.btn.primary{color:#00110b;background:linear-gradient(135deg,var(--green),var(--cyan));border:none}
+.status-row{display:flex;gap:24px;flex-wrap:wrap;color:#75929e;font:11px JetBrains Mono}
+.status-row span{color:#b8f5db}
+.scene{
+  min-height:560px;position:relative;display:grid;place-items:center;perspective:1600px;
+}
+.holo{
+  width:min(480px,90%);aspect-ratio:1;border-radius:50%;
+  position:relative;transform-style:preserve-3d;transition:transform .18s ease-out;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(0,217,255,.22),transparent 34%),
+    radial-gradient(circle at 50% 50%,rgba(33,255,134,.07),transparent 62%);
+  filter:drop-shadow(0 0 60px rgba(0,217,255,.16));
+}
+.holo::before,.holo::after{
+  content:"";position:absolute;inset:4%;border:1px solid rgba(0,217,255,.24);border-radius:50%;
+  box-shadow:inset 0 0 30px rgba(0,217,255,.09),0 0 40px rgba(0,217,255,.08);
+}
+.holo::after{inset:13%;border-color:rgba(33,255,134,.2);animation:spin 14s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ring{position:absolute;inset:0;border:1px dashed rgba(0,217,255,.22);border-radius:50%;animation:spin 19s linear infinite}
+.ring.r2{inset:8%;border-color:rgba(33,255,134,.18);animation-duration:13s}
+.ring.r3{inset:22%;border-style:solid;border-color:rgba(57,119,255,.16);animation-duration:9s}
+.orb-core{
+  position:absolute;inset:34%;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#eaffff 0 3%,var(--cyan) 14%,#04456e 43%,#001d2c 66%,transparent 67%);
+  box-shadow:0 0 30px var(--cyan),0 0 90px rgba(33,255,134,.16);
+}
+.scan-beam{position:absolute;width:72%;height:2px;left:14%;top:48%;background:linear-gradient(90deg,transparent,var(--green),transparent);box-shadow:0 0 22px var(--green);animation:beam 3.4s ease-in-out infinite}
+@keyframes beam{0%,100%{transform:translateY(-150px);opacity:0}15%,85%{opacity:1}50%{transform:translateY(150px)}}
+.float-card{
+  position:absolute;min-width:155px;padding:12px 14px;border:1px solid rgba(0,217,255,.18);
+  border-radius:14px;background:rgba(3,15,23,.74);backdrop-filter:blur(14px);
+  box-shadow:var(--glow);font:11px JetBrains Mono;color:#9db8c2;
+}
+.float-card strong{display:block;color:var(--green);margin-top:6px}
+.fc1{right:2%;top:12%;transform:translateZ(50px) rotate(2deg)}
+.fc2{left:0;bottom:17%;transform:translateZ(70px) rotate(-4deg)}
+.fc3{right:8%;bottom:4%;transform:translateZ(30px) rotate(2deg)}
+.scroll-cue{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);font:10px JetBrains Mono;letter-spacing:2px;color:#65838f}
+.scroll-cue::after{content:"";display:block;width:1px;height:34px;margin:10px auto 0;background:linear-gradient(var(--cyan),transparent);animation:drop 1.4s infinite}
+@keyframes drop{50%{transform:translateY(8px);opacity:.25}}
+.section{padding:125px 0;position:relative}
+.section.alt{background:linear-gradient(180deg,transparent,rgba(0,217,255,.025),transparent)}
+.section-head{max-width:760px;margin-bottom:56px}
+.kicker{font:700 11px JetBrains Mono;color:var(--cyan);letter-spacing:2px;text-transform:uppercase}
+h2{font-size:clamp(2.3rem,5vw,4.5rem);line-height:1;margin:14px 0 16px;letter-spacing:-.05em}
+.section-head p{color:#76919d;line-height:1.8}
+.about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:32px}
+.card{
+  background:linear-gradient(180deg,rgba(7,23,34,.72),rgba(3,12,19,.72));
+  border:1px solid var(--line);border-radius:20px;padding:28px;position:relative;overflow:hidden;
+  box-shadow:0 20px 80px rgba(0,0,0,.16);transition:.35s;transform-style:preserve-3d;
+}
+.card::before{
+  content:"";position:absolute;inset:-35%;background:radial-gradient(circle,rgba(0,217,255,.08),transparent 42%);
+  opacity:0;transition:.35s;pointer-events:none;
+}
+.card:hover{transform:translateY(-8px);border-color:rgba(0,217,255,.32);box-shadow:0 25px 80px rgba(0,217,255,.08)}
+.card:hover::before{opacity:1}
+.about-card p{color:#9ab1bd;line-height:1.9;margin-bottom:18px}
+.about-card strong{color:#d8fff0}
+.signature{display:flex;align-items:center;gap:15px;margin-top:25px;padding-top:20px;border-top:1px solid rgba(0,217,255,.12)}
+.avatar{
+  width:48px;height:48px;border-radius:14px;display:grid;place-items:center;
+  font-weight:800;color:#00110b;background:linear-gradient(135deg,var(--green),var(--cyan));
+  box-shadow:0 0 24px rgba(0,217,255,.2)
+}
+.signature small{color:#6f8b96;display:block}.signature b{display:block;color:#eafff8;margin-bottom:4px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.stat{padding:20px;border-radius:16px;border:1px solid rgba(33,255,134,.14);background:rgba(33,255,134,.03)}
+.stat b{font-size:2rem;color:var(--green);display:block}.stat span{font:10px JetBrains Mono;color:#78939f;letter-spacing:1.4px;text-transform:uppercase}
+.service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.service{
+  min-height:220px;display:flex;flex-direction:column;justify-content:space-between;
+}
+.service-icon{font-size:30px;margin-bottom:24px;filter:drop-shadow(0 0 12px rgba(0,217,255,.5))}
+.service h3{font-size:16px;letter-spacing:.5px;margin-bottom:10px}.service p{color:#78929d;line-height:1.7;font-size:14px}
+.service .tag{font:10px JetBrains Mono;color:var(--cyan);text-transform:uppercase;letter-spacing:1.5px}
+#services .card:nth-child(2) .tag,#services .card:nth-child(5) .tag{color:var(--green)}
+.cap-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.cap{display:flex;gap:16px;align-items:flex-start}.cap-num{font:700 12px JetBrains Mono;color:var(--cyan);padding-top:4px}.cap h3{margin-bottom:6px}.cap p{color:#78929d;line-height:1.7;font-size:13px}
+.tech-cloud{display:flex;flex-wrap:wrap;gap:10px}.pill{padding:9px 12px;border-radius:999px;border:1px solid rgba(0,217,255,.14);color:#9cb7c2;background:rgba(0,217,255,.035);font:10px JetBrains Mono;letter-spacing:1px}
+.contact-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:22px}
+.contact-card h3{font-size:25px;margin-bottom:14px}.contact-card p{color:#7f9aa6;line-height:1.8}
+.contact-detail{display:flex;gap:12px;align-items:center;margin-top:20px;color:#b7d2db}
+.contact-detail .dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);flex:0 0 auto}
+.contact-detail a:hover{color:var(--cyan)}
+form{display:grid;gap:13px}.field{display:grid;gap:7px}.field label{font:10px JetBrains Mono;color:#63808c;letter-spacing:1.5px;text-transform:uppercase}
+input,textarea{
+  width:100%;padding:13px 14px;border-radius:12px;border:1px solid rgba(0,217,255,.13);
+  background:rgba(0,6,12,.65);color:#dffaff;outline:none;transition:.25s
+}
+input:focus,textarea:focus{border-color:rgba(0,217,255,.55);box-shadow:0 0 0 3px rgba(0,217,255,.07),0 0 25px rgba(0,217,255,.08)}
+textarea{min-height:150px;resize:vertical}
+footer{padding:30px 0 55px;border-top:1px solid rgba(0,217,255,.10);color:#58727e;font:10px JetBrains Mono;letter-spacing:1px}
+.footer-inner{display:flex;justify-content:space-between;gap:25px;align-items:center}
+.reveal{opacity:0;transform:translateY(34px);transition:opacity .8s ease,transform .8s ease}.reveal.in{opacity:1;transform:none}
+.parallax{will-change:transform}
+@media (max-width:980px){
+  nav ul{display:none}.hero-grid,.about-grid,.contact-grid{grid-template-columns:1fr}
+  .scene{min-height:470px;order:-1}.service-grid{grid-template-columns:1fr 1fr}.cap-grid{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .container{width:min(var(--max),calc(100% - 28px))}.hero{padding-top:125px}
+  .scene{min-height:390px}.float-card{min-width:130px;font-size:10px}.fc1{right:0}.fc2{left:-4%}.fc3{right:-3%}
+  .service-grid{grid-template-columns:1fr}.stat-grid{grid-template-columns:1fr 1fr}.section{padding:92px 0}
+  .footer-inner{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div id="scroll-progress"></div>
+<div class="cursor-glow" id="cursor-glow"></div>
+<canvas id="three-bg"></canvas>
+<div id="three-fx"></div>
+
+<nav>
+  <a href="#home" class="brand" aria-label="Xploit Ops home">
+    <span class="brand-mark">XO</span><span>XPLOIT</span><span>OPS</span>
+  </a>
+  <ul>
+    <li><a href="#about">About</a></li><li><a href="#services">Services</a></li>
+    <li><a href="#capabilities">Capabilities</a></li><li><a href="#contact">Contact</a></li>
+    <li><a href="#contact" class="nav-cta">Secure a Consultation</a></li>
+  </ul>
+</nav>
+
+<main id="home">
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="reveal in">
+      <div class="eyebrow">Ethical hacking • security engineering • red team</div>
+      <h1>Build secure.<br><span class="gradient">Think like an attacker.</span></h1>
+      <p class="hero-copy">
+        Welcome to <strong>Xploit Ops</strong> — a professional ethical hacking and cybersecurity initiative created by
+        <strong>Ankit</strong>. We combine offensive security thinking, technical depth, and practical reporting to identify
+        weaknesses before real attackers do.
+      </p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#services">Explore Services ↗</a>
+        <a class="btn" href="#contact">Contact Ankit</a>
+      </div>
+      <div class="status-row">
+        <span>STATUS: <span>ONLINE</span></span>
+        <span>MODE: <span>AUTHORIZED ONLY</span></span>
+        <span>FOCUS: <span>DEFENSE THROUGH OFFENSE</span></span>
+      </div>
+    </div>
+
+    <div class="scene reveal in" id="scene">
+      <div class="holo" id="holo">
+        <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div>
+        <div class="orb-core"></div><div class="scan-beam"></div>
+      </div>
+      <div class="float-card fc1"><span>LIVE NODE</span><strong>THREAT MAP // 3D</strong></div>
+      <div class="float-card fc2"><span>OWNER</span><strong>ANKIT // CREATOR</strong></div>
+      <div class="float-card fc3"><span>SECURITY MODE</span><strong>ETHICAL / AUTHORIZED</strong></div>
+    </div>
+  </div>
+  <div class="scroll-cue">SCROLL TO ENGAGE</div>
+</section>
+
+<section class="section alt" id="about">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="kicker">// About the operator</div>
+      <h2>Built by Ankit.<br>Driven by precision.</h2>
+      <p>Xploit Ops is designed as a professional security brand with an attacker mindset and a defender's discipline.</p>
+    </div>
+    <div class="about-grid">
+      <article class="card about-card reveal" data-tilt>
+        <p><strong>Ankit is the creator behind Xploit Ops</strong> — focused on building a professional, modern cybersecurity platform that turns complex security problems into clear, actionable outcomes.</p>
+        <p>His approach is detail-oriented, practical, and deeply technical: understand the attack surface, validate the weakness responsibly, explain the risk clearly, and help the client strengthen the system.</p>
+        <p><strong>Xploit Ops provides every type of ethical hacking and cybersecurity service</strong> needed to assess, harden, monitor, and improve digital environments — always with proper authorization and responsible disclosure.</p>
+        <div class="signature">
+          <div class="avatar">A</div>
+          <div><b>Ankit</b><small>Founder &amp; Creator • Xploit Ops</small></div>
+        </div>
+      </article>
+      <div class="stat-grid">
+        <div class="stat card reveal" data-tilt><b>360°</b><span>Security mindset</span></div>
+        <div class="stat card reveal" data-tilt><b>24/7</b><span>Security awareness</span></div>
+        <div class="stat card reveal" data-tilt><b>RED → BLUE</b><span>Attack to defense</span></div>
+        <div class="stat card reveal" data-tilt><b>100%</b><span>Authorized testing</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="services">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="kicker">// Full-spectrum ethical hacking</div>
+      <h2>Every angle.<br>One security mission.</h2>
+      <p>From applications and networks to cloud, mobile, people, and incident readiness — Xploit Ops covers the full ethical hacking lifecycle.</p>
+    </div>
+    <div class="service-grid">
+      <article class="card service reveal" data-tilt><div><div class="service-icon">◈</div><h3>Web &amp; API Security</h3><p>Application, API, authentication, authorization, business-logic and common web vulnerability assessments.</p></div><span class="tag">01 / APPLICATION</span></article>
+      <article class="card service reveal" data-tilt><div><div class="service-icon">⌁</div><h3>Network Pentesting</h3><p>External and internal testing, segmentation review, attack-path simulation, exposure analysis and hardening guidance.</p></div><span class="tag">02 / INFRASTRUCTURE</span></article>
+      <article class="card service reveal" data-tilt><div><div class="service-icon">☁</div><h3>Cloud Security</h3><p>Cloud configuration review, identity and access analysis, exposed services, storage, workload and architecture testing.</p></div><span class="tag">03 / CLOUD</span></article>
+      <article class="card service reveal" data-tilt><div><div class="service-icon">▣</div><h3>Mobile Security</h3><p>Android and iOS assessment, insecure storage, runtime behavior, API interaction and mobile threat modeling.</p></div><span class="tag">04 / MOBILE</span></article>
+      <article class="card service reveal" data-tilt><div><div class="service-icon">◎</div><h3>Red Team Operations</h3><p>Goal-driven adversary simulation to test detection, response, attack paths, identity controls and organizational readiness.</p></div><span class="tag">05 / ADVERSARY</span></article>
+      <article class="card service reveal" data-tilt><div><div class="service-icon">⌂</div><h3>Social Engineering</h3><p>Authorized phishing simulations, awareness exercises and human-layer security testing designed to reduce real-world risk.</p></div><span class="tag">06 / HUMAN RISK</span></article>
+      <article class="card service reveal" data-tilt><div><div class="service-icon">⌘</div><h3>Vulnerability Assessment</h3><p>Structured identification, validation, prioritization and remediation support for technical weaknesses across environments.</p></div><span class="tag">07 / DISCOVERY</span></article>
+      <article class="card service reveal" data-tilt><div><div class="service-icon">◌</div><h3>OSINT &amp; Reconnaissance</h3><p>Attack-surface discovery, public exposure review and reconnaissance designed to understand what an attacker can learn.</p></div><span class="tag">08 / INTELLIGENCE</span></article>
+      <article class="card service reveal" data-tilt><div><div class="service-icon">△</div><h3>Security Consulting</h3><p>Security strategy, architecture reviews, remediation planning, secure-development guidance and practical risk reduction.</p></div><span class="tag">09 / ADVISORY</span></article>
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="capabilities">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="kicker">// Capability matrix</div>
+      <h2>Technical depth.<br>Business clarity.</h2>
+    </div>
+    <div class="cap-grid">
+      <article class="card cap reveal"><div class="cap-num">A1</div><div><h3>Attack Surface Discovery</h3><p>Map exposed assets, trust boundaries, technologies and likely attack paths before testing begins.</p></div></article>
+      <article class="card cap reveal"><div class="cap-num">A2</div><div><h3>Offensive Validation</h3><p>Move beyond scanners by validating whether identified weaknesses are actually exploitable and meaningful.</p></div></article>
+      <article class="card cap reveal"><div class="cap-num">A3</div><div><h3>Risk-Based Reporting</h3><p>Turn technical findings into prioritized business impact, evidence, remediation and retest guidance.</p></div></article>
+      <article class="card cap reveal"><div class="cap-num">A4</div><div><h3>Defense Improvement</h3><p>Use offensive findings to strengthen controls, improve visibility and make security operations more resilient.</p></div></article>
+    </div>
+    <div class="card reveal" style="margin-top:18px">
+      <div class="kicker" style="margin-bottom:16px">// Toolkit ecosystem</div>
+      <div class="tech-cloud">
+        <span class="pill">Nmap</span><span class="pill">Burp Suite</span><span class="pill">Metasploit</span><span class="pill">Kali Linux</span>
+        <span class="pill">Wireshark</span><span class="pill">OWASP</span><span class="pill">Python</span><span class="pill">Linux</span>
+        <span class="pill">Cloud Security</span><span class="pill">OSINT</span><span class="pill">Web Security</span><span class="pill">Red Team</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="contact">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="kicker">// Start a secure conversation</div>
+      <h2>Ready to test<br>your defenses?</h2>
+      <p>Contact Ankit directly for ethical hacking, penetration testing, security assessments, consulting, or custom engagements.</p>
+    </div>
+    <div class="contact-grid">
+      <article class="card contact-card reveal" data-tilt>
+        <h3>Contact Xploit Ops</h3>
+        <p>Tell us what you want to secure, what you want tested, and what kind of outcome you need. We can shape the engagement around your environment.</p>
+        <div class="contact-detail"><span class="dot"></span><span><small>EMAIL</small><br><a href="mailto:ankitnandy.professional@gmail.com">ankitnandy.professional@gmail.com</a></span></div>
+        <div class="contact-detail"><span class="dot"></span><span><small>PHONE</small><br><a href="tel:+917872880882">+91 7872880882</a></span></div>
+        <div class="contact-detail"><span class="dot"></span><span><small>FOCUS</small><br>Authorized ethical hacking &amp; cybersecurity services</span></div>
+      </article>
+      <div class="card reveal" data-tilt>
+        <form onsubmit="return false;">
+          <div class="field"><label>Your name</label><input type="text" placeholder="e.g. Priya Sharma"></div>
+          <div class="field"><label>Your email</label><input type="email" placeholder="you@company.com"></div>
+          <div class="field"><label>What do you need?</label><textarea placeholder="Describe your environment, application, network, cloud setup, or security goal..."></textarea></div>
+          <button class="btn primary" type="button" onclick="window.location.href='mailto:ankitnandy.professional@gmail.com?subject=Xploit Ops Security Consultation'">Send encrypted-style inquiry ↗</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container footer-inner">
+    <span>© 2026 XPLOIT OPS • CREATED BY ANKIT • AUTHORIZED ETHICAL HACKING ONLY</span>
+    <span>BLUE / GREEN / BLACK • SECURITY THROUGH RESPONSIBLE OFFENSE</span>
+  </div>
+</footer>
+
+<script>
+// -------------------------
+// Three.js interactive space
+// -------------------------
+const canvas = document.getElementById('three-bg');
+const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(52, innerWidth/innerHeight, .1, 1000);
+camera.position.z = 8;
+
+const group = new THREE.Group();
+scene.add(group);
+
+const pointsCount = 1700;
+const positions = new Float32Array(pointsCount*3);
+const colors = new Float32Array(pointsCount*3);
+for(let i=0;i<pointsCount;i++){
+  const r = 11 + Math.random()*17;
+  const a = Math.random()*Math.PI*2;
+  const b = Math.acos(THREE.MathUtils.randFloatSpread(2));
+  positions[i*3] = r*Math.sin(b)*Math.cos(a);
+  positions[i*3+1] = r*Math.sin(b)*Math.sin(a);
+  positions[i*3+2] = r*Math.cos(b);
+  const green = Math.random()>.56;
+  colors[i*3] = green ? .18 : 0;
+  colors[i*3+1] = green ? 1 : .72;
+  colors[i*3+2] = 1;
+}
+const pGeo = new THREE.BufferGeometry();
+pGeo.setAttribute('position',new THREE.BufferAttribute(positions,3));
+pGeo.setAttribute('color',new THREE.BufferAttribute(colors,3));
+const pMat = new THREE.PointsMaterial({size:.045,vertexColors:true,transparent:true,opacity:.68});
+const pts = new THREE.Points(pGeo,pMat); group.add(pts);
+
+const shell = new THREE.Mesh(
+  new THREE.IcosahedronGeometry(2.5,3),
+  new THREE.MeshBasicMaterial({color:0x00d9ff,wireframe:true,transparent:true,opacity:.075})
+);
+group.add(shell);
+
+const inner = new THREE.Mesh(
+  new THREE.IcosahedronGeometry(1.42,2),
+  new THREE.MeshBasicMaterial({color:0x21ff86,wireframe:true,transparent:true,opacity:.08})
+);
+group.add(inner);
+
+const torus1 = new THREE.Mesh(
+  new THREE.TorusGeometry(3.2,.012,8,160),
+  new THREE.MeshBasicMaterial({color:0x00d9ff,transparent:true,opacity:.3})
+);
+torus1.rotation.x = .75; group.add(torus1);
+
+const torus2 = new THREE.Mesh(
+  new THREE.TorusGeometry(3.7,.008,8,160),
+  new THREE.MeshBasicMaterial({color:0x21ff86,transparent:true,opacity:.2})
+);
+torus2.rotation.y = 1.2; group.add(torus2);
+
+let mx=0,my=0,scrollY=0;
+window.addEventListener('mousemove', e=>{
+  mx=(e.clientX/innerWidth-.5)*2; my=(e.clientY/innerHeight-.5)*2;
+  document.getElementById('cursor-glow').style.left=e.clientX+'px';
+  document.getElementById('cursor-glow').style.top=e.clientY+'px';
+});
+window.addEventListener('scroll', ()=>scrollY=window.scrollY,{passive:true});
+function animate(){
+  requestAnimationFrame(animate);
+  const t=performance.now()*.0003;
+  pts.rotation.y=t*.85 + scrollY*.00008;
+  pts.rotation.x=t*.22 + scrollY*.00002;
+  shell.rotation.y=t*.9 + scrollY*.00015;
+  shell.rotation.x=t*.32;
+  inner.rotation.z=-t*1.1;
+  torus1.rotation.z=t*.7;
+  torus2.rotation.x=t*.36;
+  camera.position.x += (mx*.32-camera.position.x)*.025;
+  camera.position.y += (-my*.2-camera.position.y)*.025;
+  group.rotation.y += ((mx*.12)-group.rotation.y)*.01;
+  group.rotation.x += ((-my*.07)-group.rotation.x)*.01;
+  renderer.render(scene,camera);
+}
+animate();
+window.addEventListener('resize',()=>{
+  renderer.setSize(innerWidth,innerHeight);
+  camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
+});
+
+// Scroll-linked 3D hero and page motion
+const holo=document.getElementById('holo');
+function scrollMotion(){
+  const y=window.scrollY;
+  holo.style.transform=`rotateX(${12 + y*.025}deg) rotateY(${-10 + y*.035}deg) translateZ(${Math.min(y*.08,70)}px)`;
+  document.getElementById('scroll-progress').style.width=(y/(document.body.scrollHeight-innerHeight)*100)+'%';
+}
+window.addEventListener('scroll',scrollMotion,{passive:true}); scrollMotion();
+
+// Reveal observer
+const io=new IntersectionObserver(entries=>{
+  entries.forEach((entry,i)=>{
+    if(entry.isIntersecting){
+      setTimeout(()=>entry.target.classList.add('in'),i*70);
+      io.unobserve(entry.target);
+    }
+  });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// 3D tilt cards
+document.querySelectorAll('[data-tilt]').forEach(card=>{
+  card.addEventListener('pointermove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=e.clientX-r.left, y=e.clientY-r.top;
+    const rx=((y/r.height)-.5)*-7, ry=((x/r.width)-.5)*8;
+    card.style.transform=`translateY(-8px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+  });
+  card.addEventListener('pointerleave',()=>card.style.transform='');
+});
+</script>
+</body>
+</html>
